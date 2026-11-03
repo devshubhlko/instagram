@@ -1,0 +1,922 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>InstaReel — Ultimate Instagram Reel & Media Downloader</title>
+
+  <!-- Favicon -->
+  <link rel="icon" type="image/svg+xml"
+    href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23ec4899'><path d='M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z'/></svg>" />
+
+  <!-- Google Fonts: Inter -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap"
+    rel="stylesheet">
+
+  <!-- Tailwind CSS & Lucide Icons -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <!-- jQuery -->
+  <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['"Plus Jakarta Sans"', 'sans-serif'],
+          },
+          colors: {
+            brand: {
+              gradient1: '#833ab4',
+              gradient2: '#fd1d1d',
+              gradient3: '#fcb045',
+            }
+          },
+          boxShadow: {
+            'glow-pink': '0 0 25px -5px rgba(236, 72, 153, 0.3)',
+            'glow-purple': '0 0 25px -5px rgba(168, 85, 247, 0.3)',
+          } 
+        }
+      }
+    }
+  </script>
+
+  <style>
+    /* Theme Transition & Scrollbar */
+    * {
+      transition: background-color 0.25s ease, border-color 0.25s ease, color 0.15s ease;
+    }
+
+    .insta-gradient {
+      background: linear-gradient(45deg, #f09433 0%, #e6683c 25%, #dc2743 50%, #cc2366 75%, #bc1888 100%);
+    }
+
+    .insta-gradient-text {
+      background: linear-gradient(135deg, #f58529, #dd2a7b, #8134af, #515bd4);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    /* Toast Animation */
+    @keyframes slideIn {
+      from {
+        transform: translateY(-20px);
+        opacity: 0;
+      }
+
+      to {
+        transform: translateY(0);
+        opacity: 1;
+      }
+    }
+
+    .toast-anim {
+      animation: slideIn 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    }
+
+    /* Custom scrollbar */
+    ::-webkit-scrollbar {
+      width: 6px;
+    }
+
+    ::-webkit-scrollbar-track {
+      background: transparent;
+    }
+
+    /* Light Mode Overrides for clean, crisp contrast */
+    html:not(.dark) body {
+      background-color: #f8fafc !important;
+      color: #0f172a !important;
+    }
+
+    html:not(.dark) header {
+      background-color: rgba(255, 255, 255, 0.85) !important;
+      border-color: #e2e8f0 !important;
+    }
+
+    html:not(.dark) .logo-inner-box {
+      background-color: #ffffff !important;
+    }
+
+    html:not(.dark) .logo-title {
+      color: #0f172a !important;
+    }
+
+    html:not(.dark) .logo-subtitle {
+      color: #64748b !important;
+    }
+
+    html:not(.dark) #themeToggle {
+      background-color: #ffffff !important;
+      border-color: #cbd5e1 !important;
+      color: #334155 !important;
+    }
+
+    html:not(.dark) #themeToggle:hover {
+      background-color: #f1f5f9 !important;
+      color: #0f172a !important;
+    }
+
+    html:not(.dark) #heroTitle {
+      color: #0f172a !important;
+    }
+
+    html:not(.dark) #inputContainer {
+      background-color: #ffffff !important;
+      border-color: #e2e8f0 !important;
+      box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05), 0 8px 10px -6px rgba(0, 0, 0, 0.05) !important;
+    }
+
+    html:not(.dark) #reelUrlInput {
+      background-color: #f8fafc !important;
+      border-color: #cbd5e1 !important;
+      color: #0f172a !important;
+    }
+
+    html:not(.dark) #reelUrlInput::placeholder {
+      color: #94a3b8 !important;
+    }
+
+    html:not(.dark) #resultsSection h2 {
+      color: #0f172a !important;
+    }
+
+    html:not(.dark) #clearResultsBtn {
+      background-color: #ffffff !important;
+      border-color: #cbd5e1 !important;
+      color: #475569 !important;
+    }
+
+    html:not(.dark) #clearResultsBtn:hover {
+      background-color: #f1f5f9 !important;
+      color: #0f172a !important;
+    }
+
+    html:not(.dark) .card-surface {
+      background-color: #ffffff !important;
+      border-color: #e2e8f0 !important;
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.04) !important;
+    }
+
+    html:not(.dark) .card-title {
+      color: #0f172a !important;
+    }
+
+    html:not(.dark) .card-desc {
+      color: #64748b !important;
+    }
+
+    html:not(.dark) .stat-box {
+      background-color: #f1f5f9 !important;
+      border-color: #e2e8f0 !important;
+    }
+
+    html:not(.dark) .stat-label {
+      color: #64748b !important;
+    }
+
+    html:not(.dark) .stat-value {
+      color: #0f172a !important;
+    }
+
+    html:not(.dark) .btn-secondary {
+      background-color: #f1f5f9 !important;
+      border-color: #cbd5e1 !important;
+      color: #334155 !important;
+    }
+
+    html:not(.dark) .btn-secondary:hover {
+      background-color: #e2e8f0 !important;
+      color: #0f172a !important;
+    }
+
+    html:not(.dark) #captionContent {
+      color: #334155 !important;
+    }
+
+    html:not(.dark) footer {
+      background-color: #ffffff !important;
+      border-color: #e2e8f0 !important;
+      color: #64748b !important;
+    }
+
+    ::-webkit-scrollbar-thumb {
+      background: #4b5563;
+      border-radius: 9999px;
+    }
+  </style>
+</head>
+
+<body
+  class="bg-slate-900 text-slate-100 min-h-screen flex flex-col font-sans selection:bg-pink-500 selection:text-white relative overflow-x-hidden">
+
+  <!-- Ambient Background Glows -->
+  <div class="fixed inset-0 pointer-events-none -z-10 overflow-hidden">
+    <div class="absolute -top-40 -left-40 w-96 h-96 bg-purple-600/20 rounded-full blur-[128px]"></div>
+    <div class="absolute top-1/4 -right-40 w-96 h-96 bg-pink-600/20 rounded-full blur-[128px]"></div>
+    <div class="absolute bottom-10 left-1/3 w-80 h-80 bg-orange-500/15 rounded-full blur-[128px]"></div>
+  </div>
+
+  <!-- Toast Notification Center -->
+  <div id="toastContainer" class="fixed top-5 right-5 z-50 flex flex-col gap-3 pointer-events-none"></div>
+
+  <!-- Header / Navigation Bar -->
+  <header class="w-full border-b border-slate-800/80 bg-slate-900/70 backdrop-blur-md sticky top-0 z-40">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between">
+
+      <!-- Logo -->
+      <a href="#" class="flex items-center gap-3 group">
+        <div>
+          <span class="logo-title text-xl font-bold tracking-tight text-white flex items-center gap-1.5">
+            Insta<span class="insta-gradient-text font-extrabold">Reel</span>
+          </span>
+          <span
+            class="logo-subtitle text-[10px] uppercase tracking-widest text-slate-400 font-semibold block -mt-1">Downloader</span>
+        </div>
+      </a>
+
+      <!-- Theme Switcher -->
+      <div class="flex items-center gap-3">
+        <!-- Theme Toggle Button (Dark / Light) -->
+        <button id="themeToggle" type="button" aria-label="Toggle theme"
+          class="p-2.5 rounded-xl bg-slate-800 text-slate-300 hover:text-white hover:bg-slate-700/80 border border-slate-700/60 shadow-sm transition">
+          <i data-lucide="sun" id="sunIcon" class="w-5 h-5"></i>
+          <i data-lucide="moon" id="moonIcon" class="w-5 h-5 hidden"></i>
+        </button>
+      </div>
+
+    </div>
+  </header>
+
+  <!-- Main Container -->
+  <main class="flex-grow max-w-4xl w-full mx-auto px-4 sm:px-6 py-10 sm:py-16">
+
+    <!-- Hero Section -->
+    <div class="text-center max-w-2xl mx-auto mb-8">
+      <h1 id="heroTitle" class="text-3xl sm:text-5xl font-extrabold text-white tracking-tight leading-tight mb-2">
+        Instagram <span class="insta-gradient-text">Downloader</span>
+      </h1>
+    </div>
+
+    <!-- URL Input Card -->
+    <div id="inputContainer"
+      class="card-surface bg-slate-800/80 backdrop-blur-xl border border-slate-700/70 rounded-2xl p-4 sm:p-6 shadow-2xl relative mb-10">
+
+      <form id="reelForm" class="flex flex-col sm:flex-row items-center gap-3">
+        <!-- Input with Left Icon -->
+        <div class="relative w-full flex-grow">
+          <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-slate-400">
+            <i data-lucide="link" class="w-5 h-5"></i>
+          </div>
+          <input type="url" id="reelUrlInput" placeholder="Paste Instagram Reel/Post Link" required autocomplete="off"
+            class="w-full pl-11 pr-4 py-3.5 sm:py-4 bg-slate-900/90 text-slate-100 placeholder-slate-400 border border-slate-700 rounded-xl text-sm sm:text-base focus:outline-none focus:border-pink-500 focus:ring-2 focus:ring-pink-500/20 transition" />
+        </div>
+
+        <!-- Submit Button -->
+        <button type="submit" id="fetchBtn"
+          class="w-full sm:w-auto min-w-[150px] py-3.5 sm:py-4 px-6 rounded-xl font-bold text-sm sm:text-base text-white insta-gradient hover:opacity-95 shadow-lg shadow-pink-500/25 active:scale-[0.98] transition flex items-center justify-center gap-2 cursor-pointer disabled:opacity-60 disabled:cursor-not-allowed">
+          <i data-lucide="download" id="btnIcon" class="w-5 h-5"></i>
+          <span id="btnText">Get Links</span>
+          <!-- Loading Spinner -->
+          <svg id="btnSpinner" class="hidden animate-spin -ml-1 mr-2 h-5 w-5 text-white" fill="none"
+            viewBox="0 0 24 24">
+            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+            <path class="opacity-75" fill="currentColor"
+              d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z">
+            </path>
+          </svg>
+        </button>
+      </form>
+
+    </div>
+
+    <!-- Error Alert Banner -->
+    <div id="errorAlert"
+      class="hidden mb-8 p-4 bg-red-950/40 border border-red-500/30 rounded-xl text-red-200 text-sm flex items-start gap-3">
+      <i data-lucide="alert-circle" class="w-5 h-5 text-red-400 flex-shrink-0 mt-0.5"></i>
+      <div class="flex-grow">
+        <p class="font-semibold text-red-300" id="errorTitle">Oops! Something went wrong.</p>
+        <p class="text-xs text-red-300/80 mt-0.5" id="errorMessage">Unable to fetch the reel. Make sure the account is
+          public.</p>
+      </div>
+      <button type="button" id="closeError" class="text-red-400 hover:text-red-200">
+        <i data-lucide="x" class="w-4 h-4"></i>
+      </button>
+    </div>
+
+    <!-- Results Section (Dynamic) -->
+    <div id="resultsSection" class="hidden space-y-6">
+
+      <!-- Section Header -->
+      <div class="flex items-center justify-between">
+        <h2 class="text-xl sm:text-2xl font-bold text-white flex items-center gap-2">
+          <i data-lucide="check-circle-2" class="w-6 h-6 text-pink-500"></i>
+          Ready to Download
+        </h2>
+        <button id="clearResultsBtn"
+          class="text-xs text-slate-400 hover:text-white flex items-center gap-1 px-2.5 py-1 rounded-md bg-slate-800 border border-slate-700">
+          <i data-lucide="rotate-ccw" class="w-3.5 h-3.5"></i> Clear
+        </button>
+      </div>
+
+      <!-- Main Result Grid -->
+      <div class="grid grid-cols-1 md:grid-cols-12 gap-6">
+
+        <!-- Column Left: Media Preview (5 cols) -->
+        <div class="md:col-span-5 flex flex-col gap-4">
+
+          <!-- Thumbnail Box (Clickable preview) -->
+          <div
+            class="card-surface bg-slate-800/80 border border-slate-700 rounded-2xl p-3 backdrop-blur-sm group relative overflow-hidden">
+            <a id="thumbnailPreviewBtn" href="#" target="_blank" rel="noopener"
+              class="block relative w-full aspect-[9/16] max-h-[420px] rounded-xl overflow-hidden bg-slate-900 group cursor-pointer">
+              <img id="thumbnailImg" src="" alt="Post Preview"
+                class="w-full h-full object-cover group-hover:scale-105 transition duration-500" />
+            </a>
+          </div>
+
+        </div>
+
+        <!-- Column Right: Download Cards & Caption (7 cols) -->
+        <div class="md:col-span-7 flex flex-col gap-4">
+
+          <!-- Dynamic Images Container (For Single Photo or Multiple Carousel Images) -->
+          <div id="imagesContainer" class="hidden flex flex-col gap-3"></div>
+
+          <!-- 1. Video (SD / Standard Quality) Card -->
+          <div id="videoCard"
+            class="card-surface bg-slate-800/80 border border-slate-700 rounded-2xl p-4 sm:p-5 backdrop-blur-sm hover:border-pink-500/40 transition">
+            <div class="flex items-start justify-between gap-2 mb-3">
+              <div class="flex items-center gap-3 min-w-0">
+                <div
+                  class="w-10 h-10 rounded-xl bg-pink-500/10 border border-pink-500/20 text-pink-400 flex items-center justify-center flex-shrink-0">
+                  <i data-lucide="video" class="w-5 h-5"></i>
+                </div>
+                <div class="min-w-0">
+                  <h3 class="card-title font-bold text-white text-sm sm:text-base truncate">
+                    Video (SD / Fast)
+                  </h3>
+                  <p class="card-desc text-xs text-slate-400 mt-0.5 truncate">MP4 format, optimized file size</p>
+                </div>
+              </div>
+              <span
+                class="flex-shrink-0 text-[10px] font-bold px-2 py-0.5 rounded-full bg-slate-700 text-slate-300">Standard</span>
+            </div>
+
+            <div class="flex items-center gap-2.5 mt-4">
+              <a href="#" target="_blank" rel="noopener" id="sdDownloadBtn"
+                class="flex-1 py-2.5 px-4 rounded-xl text-xs sm:text-sm font-bold text-white insta-gradient hover:opacity-90 shadow-md shadow-pink-500/20 flex items-center justify-center gap-1.5 transition">
+                <i data-lucide="download" class="w-4 h-4"></i> Download
+              </a>
+              <a id="sdViewBtn" href="#" target="_blank" rel="noopener"
+                class="btn-secondary py-2.5 px-5 rounded-xl text-xs sm:text-sm font-semibold bg-slate-700/70 hover:bg-slate-700 text-slate-200 border border-slate-600/60 flex items-center justify-center gap-1.5 transition">
+                <i data-lucide="external-link" class="w-4 h-4"></i> View
+              </a>
+            </div>
+          </div>
+
+          <!-- 2. Video (HD Quality) Card -->
+          <div id="hdVideoCard"
+            class="card-surface bg-slate-800/80 border border-slate-700 rounded-2xl p-4 sm:p-5 backdrop-blur-sm hover:border-purple-500/40 transition">
+            <div class="flex items-start justify-between gap-2 mb-3">
+              <div class="flex items-center gap-3 min-w-0">
+                <div
+                  class="w-10 h-10 rounded-xl bg-purple-500/10 border border-purple-500/20 text-purple-400 flex items-center justify-center flex-shrink-0">
+                  <i data-lucide="sparkles" class="w-5 h-5"></i>
+                </div>
+                <div class="min-w-0">
+                  <h3 class="card-title font-bold text-white text-sm sm:text-base truncate">
+                    Video (HD / High Quality)
+                  </h3>
+                  <p class="card-desc text-xs text-slate-400 mt-0.5 truncate">Crystal clear 1080p MP4</p>
+                </div>
+              </div>
+              <span
+                class="flex-shrink-0 text-[10px] font-bold px-2.5 py-1 rounded-full bg-indigo-500 text-white shadow-sm">1080p HD</span>
+            </div>
+
+            <div class="flex items-center gap-2.5 mt-4">
+              <a href="#" target="_blank" rel="noopener" id="hdDownloadBtn"
+                class="flex-1 py-2.5 px-4 rounded-xl text-xs sm:text-sm font-bold text-white bg-gradient-to-r from-purple-600 to-indigo-600 hover:opacity-90 shadow-md shadow-purple-500/20 flex items-center justify-center gap-1.5 transition">
+                <i data-lucide="download" class="w-4 h-4"></i> Download HD
+              </a>
+              <a id="hdViewBtn" href="#" target="_blank" rel="noopener"
+                class="btn-secondary py-2.5 px-5 rounded-xl text-xs sm:text-sm font-semibold bg-slate-700/70 hover:bg-slate-700 text-slate-200 border border-slate-600/60 flex items-center justify-center gap-1.5 transition">
+                <i data-lucide="external-link" class="w-4 h-4"></i> View
+              </a>
+            </div>
+          </div>
+
+          <!-- 3. Audio Extraction Card -->
+          <div id="audioCard"
+            class="card-surface bg-slate-800/80 border border-slate-700 rounded-2xl p-4 sm:p-5 backdrop-blur-sm hover:border-amber-500/40 transition">
+            <div class="flex items-start justify-between gap-2 mb-3">
+              <div class="flex items-center gap-3 min-w-0">
+                <div
+                  class="w-10 h-10 rounded-xl bg-amber-500/10 border border-amber-500/20 text-amber-400 flex items-center justify-center flex-shrink-0">
+                  <i data-lucide="music-2" class="w-5 h-5"></i>
+                </div>
+                <div class="min-w-0">
+                  <h3 class="card-title font-bold text-white text-sm sm:text-base truncate">
+                    Audio Only (MP3 / AAC)
+                  </h3>
+                  <p class="card-desc text-xs text-slate-400 mt-0.5 truncate">Isolated background audio track</p>
+                </div>
+              </div>
+              <span
+                class="flex-shrink-0 text-[10px] font-bold px-2.5 py-1 rounded-full bg-amber-500 text-slate-950 shadow-sm">Audio</span>
+            </div>
+
+            <div class="flex items-center gap-2.5 mt-4">
+              <a href="#" target="_blank" rel="noopener" id="audioDownloadBtn"
+                class="flex-1 py-2.5 px-4 rounded-xl text-xs sm:text-sm font-bold text-slate-950 bg-amber-400 hover:bg-amber-300 shadow-md shadow-amber-400/20 flex items-center justify-center gap-1.5 transition">
+                <i data-lucide="download" class="w-4 h-4"></i> Download Audio
+              </a>
+              <a id="audioViewBtn" href="#" target="_blank" rel="noopener"
+                class="btn-secondary py-2.5 px-5 rounded-xl text-xs sm:text-sm font-semibold bg-slate-700/70 hover:bg-slate-700 text-slate-200 border border-slate-600/60 flex items-center justify-center gap-1.5 transition">
+                <i data-lucide="play" class="w-4 h-4"></i> Listen
+              </a>
+            </div>
+          </div>
+
+          <!-- 4. Caption & Hashtag Section -->
+          <div class="card-surface bg-slate-800/80 border border-slate-700 rounded-2xl p-5 backdrop-blur-sm">
+            <div class="flex items-center justify-between gap-3 mb-2 pb-2 border-b border-slate-700/50">
+              <h3 class="card-title font-bold text-white text-sm flex items-center gap-2">
+                <i data-lucide="align-left" class="w-4 h-4 text-pink-400"></i> Caption & Tags
+              </h3>
+              <button id="copyCaptionBtn" type="button"
+                class="text-xs font-bold text-white insta-gradient hover:opacity-90 shadow-sm px-3.5 py-1.5 rounded-xl flex items-center gap-1.5 transition active:scale-95">
+                <i data-lucide="copy" id="copyBtnIcon" class="w-3.5 h-3.5"></i>
+                <span id="copyBtnText">Copy Caption</span>
+              </button>
+            </div>
+
+            <p id="captionContent"
+              class="text-xs sm:text-sm text-slate-300 whitespace-pre-wrap break-words leading-relaxed max-h-48 overflow-y-auto pr-2">
+              No caption provided for this post.
+            </p>
+          </div>
+
+        </div>
+
+      </div>
+
+    </div>
+
+
+  </main>
+
+  <!-- Footer -->
+  <footer class="mt-auto border-t border-slate-800/80 bg-slate-950/60 py-8 text-center text-xs text-slate-500">
+    <div class="max-w-6xl mx-auto px-4 flex flex-col sm:flex-row items-center justify-between gap-4">
+      <p>© 2026 InstaReel Downloader.</p>
+      <p class="text-[11px] text-slate-500">
+        Disclaimer: This tool is not affiliated with or endorsed by Instagram or Meta. For personal use only.
+      </p>
+    </div>
+  </footer>
+
+  <!-- Application Logic -->
+  <script>
+    /**
+     * CONFIGURATION:
+     * - For Local Testing: Use "http://localhost:3000"
+     * - For Production (Render): Change to "https://YOUR-BACKEND-URL.onrender.com"
+     */
+    const BACKEND_BASE_URL = window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1"
+      ? "http://localhost:3000"
+      : "https://YOUR-BACKEND-URL.onrender.com";
+
+    $(document).ready(function () {
+      // Initialize Lucide icons
+      lucide.createIcons();
+
+      // ==========================================
+      // Theme Switcher (Dark / Light Mode Support)
+      // ==========================================
+      const $html = $('html');
+      const $sunIcon = $('#sunIcon');
+      const $moonIcon = $('#moonIcon');
+
+      function setTheme(isLight) {
+        if (isLight) {
+          $html.removeClass('dark');
+          $sunIcon.addClass('hidden');
+          $moonIcon.removeClass('hidden');
+          localStorage.setItem('instareel_theme', 'light');
+        } else {
+          $html.addClass('dark');
+          $sunIcon.removeClass('hidden');
+          $moonIcon.addClass('hidden');
+          localStorage.setItem('instareel_theme', 'dark');
+        }
+      }
+
+      // Check saved preference or default to Dark mode
+      const savedTheme = localStorage.getItem('instareel_theme') || 'dark';
+      setTheme(savedTheme === 'light');
+
+      $('#themeToggle').on('click', function () {
+        const isCurrentlyDark = $html.hasClass('dark');
+        setTheme(isCurrentlyDark);
+      });
+
+      // Toast Notification System (Silent / Disabled per user preference)
+      function showToast(message, type = 'info') {
+        // Toasts disabled - clean UX
+      }
+
+      // ==========================================
+      // URL Parsing & Regex Helper
+      // Extracts Reel, Post, or TV shortcode
+      // ==========================================
+      function extractInstagramShortcode(url) {
+        try {
+          const parsed = new URL(url.trim());
+          if (!/(^|\.)instagram\.com$/i.test(parsed.hostname)) return null;
+          const match = parsed.pathname.match(/\/(reel|reels|p|tv)\/([A-Za-z0-9_-]+)/i);
+          return match ? { type: match[1], code: match[2] } : null;
+        } catch (e) {
+          return null;
+        }
+      }
+
+      // Live Shortcode indicator
+      $('#reelUrlInput').on('input', function () {
+        const val = $(this).val().trim();
+        const result = extractInstagramShortcode(val);
+        if (result) {
+          $('#detectedShortcode').html(`Found: <strong class="text-white">${result.type.toUpperCase()} / ${result.code}</strong>`);
+        } else {
+          $('#detectedShortcode').text('');
+        }
+      });
+
+      // Paste from clipboard button
+      $('#pasteBtn').on('click', async function () {
+        try {
+          if (!navigator.clipboard) {
+            showToast('Clipboard access not supported in this browser.', 'error');
+            return;
+          }
+          const text = await navigator.clipboard.readText();
+          if (text) {
+            $('#reelUrlInput').val(text).trigger('input');
+            showToast('Link pasted from clipboard!', 'success');
+          }
+        } catch (err) {
+          showToast('Could not access clipboard. Please paste manually.', 'error');
+        }
+      });
+
+      // Clear results button
+      $('#clearResultsBtn').on('click', function () {
+        $('#resultsSection').addClass('hidden');
+        $('#reelUrlInput').val('').trigger('input');
+        hideError();
+      });
+
+      // Error UI Helpers
+      function showError(title, message) {
+        $('#errorTitle').text(title);
+        $('#errorMessage').text(message);
+        $('#errorAlert').removeClass('hidden');
+        lucide.createIcons();
+      }
+
+      function hideError() {
+        $('#errorAlert').addClass('hidden');
+      }
+
+      $('#closeError').on('click', hideError);
+
+      // Loading UI State
+      function setLoading(isLoading) {
+        const $btn = $('#fetchBtn');
+        const $spinner = $('#btnSpinner');
+        const $btnIcon = $('#btnIcon');
+        const $btnText = $('#btnText');
+
+        if (isLoading) {
+          $btn.prop('disabled', true);
+          $spinner.removeClass('hidden');
+          $btnIcon.addClass('hidden');
+          $btnText.text('Resolving...');
+        } else {
+          $btn.prop('disabled', false);
+          $spinner.addClass('hidden');
+          $btnIcon.removeClass('hidden');
+          $btnText.text('Get Links');
+        }
+      }
+
+      // ==========================================
+      // Download Handler (Uses Direct Proxy Streaming & Blob Download)
+      // ==========================================
+      async function triggerDownload(url, filename, $btn) {
+        if (!url || url === '#' || url.startsWith('javascript:')) {
+          return;
+        }
+
+        // Set button loading state
+        let originalContent = '';
+        if ($btn && $btn.length) {
+          originalContent = $btn.html();
+          $btn.prop('disabled', true).addClass('opacity-70 cursor-not-allowed')
+            .html('<svg class="animate-spin h-4 w-4 text-white inline mr-1" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg> <span>Downloading...</span>');
+        }
+
+        const restoreBtn = () => {
+          if ($btn && $btn.length) {
+            $btn.prop('disabled', false).removeClass('opacity-70 cursor-not-allowed').html(originalContent);
+            lucide.createIcons();
+          }
+        };
+
+        try {
+          // Route through backend proxy download endpoint to bypass Instagram CDN CORS completely
+          const cleanBaseUrl = BACKEND_BASE_URL.replace(/\/$/, '');
+          const proxyDownloadUrl = `${cleanBaseUrl}/api/download?url=${encodeURIComponent(url)}&filename=${encodeURIComponent(filename || 'instagram_media')}`;
+
+          const res = await fetch(proxyDownloadUrl);
+          if (!res.ok) throw new Error('Proxy download failed');
+
+          const blob = await res.blob();
+          const blobUrl = window.URL.createObjectURL(blob);
+          const a = document.createElement('a');
+          a.style.display = 'none';
+          a.href = blobUrl;
+          a.download = filename || 'instagram_media.jpg';
+          document.body.appendChild(a);
+          a.click();
+          window.URL.revokeObjectURL(blobUrl);
+          document.body.removeChild(a);
+
+          setTimeout(restoreBtn, 600);
+        } catch (err) {
+          console.warn('Backend proxy fetch error, attempting direct open fallback:', err);
+          // Fallback: If local backend download fails, trigger direct download via anchor
+          const a = document.createElement('a');
+          a.href = url;
+          a.download = filename || 'instagram_media.jpg';
+          a.target = '_blank';
+          document.body.appendChild(a);
+          a.click();
+          document.body.removeChild(a);
+          setTimeout(restoreBtn, 800);
+        }
+      }
+
+      // Wire download clicks
+      $(document).on('click', '[data-action="download"]', function (e) {
+        e.preventDefault();
+        e.stopPropagation();
+        const $btn = $(this);
+        const url = $btn.attr('data-url');
+        const filename = $btn.attr('data-filename');
+        triggerDownload(url, filename, $btn);
+      });
+
+      // Switch image preview on card click
+      $(document).on('click', '.carousel-item-card', function () {
+        const clickedImgUrl = $(this).attr('data-img-url');
+        const imgIndex = $(this).attr('data-img-index');
+
+        if (clickedImgUrl) {
+          // Update preview image & full view link on the left side
+          $('#thumbnailImg').attr('src', clickedImgUrl);
+          $('#thumbnailPreviewBtn').attr('href', clickedImgUrl);
+
+          // Update active border highlight
+          $('.carousel-item-card')
+            .removeClass('border-pink-500 shadow-glow-pink ring-1 ring-pink-500')
+            .addClass('border-slate-700');
+          $(this)
+            .removeClass('border-slate-700')
+            .addClass('border-pink-500 shadow-glow-pink ring-1 ring-pink-500');
+
+          // Toggle showing tag
+          $('.preview-active-tag').addClass('hidden');
+          $(this).find('.preview-active-tag').removeClass('hidden');
+        }
+      });
+
+      // Copy Caption with direct in-button feedback
+      $('#copyCaptionBtn').on('click', function () {
+        const text = $('#captionContent').text().trim();
+        if (!text || text === 'No caption provided for this post.') {
+          return;
+        }
+
+        const $btn = $(this);
+        const $icon = $('#copyBtnIcon');
+        const $text = $('#copyBtnText');
+
+        navigator.clipboard.writeText(text).then(() => {
+          $icon.attr('data-lucide', 'check');
+          $text.text('Copied!');
+          $btn.removeClass('insta-gradient').addClass('bg-emerald-600');
+          lucide.createIcons();
+
+          setTimeout(() => {
+            $icon.attr('data-lucide', 'copy');
+            $text.text('Copy Caption');
+            $btn.removeClass('bg-emerald-600').addClass('insta-gradient');
+            lucide.createIcons();
+          }, 2000);
+        }).catch(() => {
+          $text.text('Failed');
+          setTimeout(() => {
+            $text.text('Copy Caption');
+          }, 2000);
+        });
+      });
+
+      // ==========================================
+      // Form Submission & Backend Request
+      // ==========================================
+      $('#reelForm').on('submit', function (e) {
+        e.preventDefault();
+        hideError();
+
+        const inputUrl = $('#reelUrlInput').val().trim();
+        const parsed = extractInstagramShortcode(inputUrl);
+
+        if (!parsed) {
+          showError('Invalid Instagram URL', 'Please provide a valid Instagram Reel or Post link (e.g. https://www.instagram.com/reel/C8...)');
+          return;
+        }
+
+        setLoading(true);
+        $('#resultsSection').addClass('hidden');
+
+        // Target API Endpoint:
+        const cleanBaseUrl = BACKEND_BASE_URL.replace(/\/$/, '');
+        const requestUrl = `${cleanBaseUrl}/api/resolve?url=${encodeURIComponent(inputUrl)}`;
+
+        $.ajax({
+          url: requestUrl,
+          method: 'GET',
+          dataType: 'json',
+          timeout: 30000,
+          success: function (data) {
+            setLoading(false);
+
+            if (!data || (!data.items && !data.url)) {
+              showError('No Media Found', 'Could not locate downloadable media. This post might be from a private account or removed.');
+              return;
+            }
+
+            // Normalization: Items array
+            const items = Array.isArray(data.items) && data.items.length ? data.items : [data];
+            const isImagePost = items.every(item => item.kind === 'image') || data.type === 'carousel';
+            const hasVideo = items.some(item => item.kind === 'video' || (!item.kind && item.url));
+
+            // Reset containers
+            $('#imagesContainer').empty().addClass('hidden');
+            $('#videoCard').addClass('hidden');
+            $('#hdVideoCard').addClass('hidden');
+            $('#audioCard').addClass('hidden');
+
+            const postCode = parsed.code || 'post';
+            const cleanBase = BACKEND_BASE_URL.replace(/\/$/, '');
+
+            if (isImagePost) {
+              // ==========================================
+              // IMAGE / CAROUSEL POST HANDLING
+              // ==========================================
+              // Left Thumbnail setup (first image)
+              const firstImg = items[0].url || items[0].thumbnail;
+              $('#thumbnailImg').attr('src', firstImg);
+              $('#thumbnailPreviewBtn').attr('href', items[0].url);
+
+              // Render Download Cards for Each Image
+              items.forEach((item, index) => {
+                const imgNum = index + 1;
+                const imgUrl = item.url || item.thumbnail;
+                const imgThumb = item.thumbnail || item.url;
+                const resolutionText = item.width && item.height ? `${item.width}x${item.height}px` : 'Full Resolution JPG';
+                const activeBorder = index === 0 ? 'border-pink-500 shadow-glow-pink ring-1 ring-pink-500' : 'border-slate-700';
+
+                // Use Backend Proxy Download Endpoint which sets 'Content-Disposition: attachment'
+                // This FORCES the browser to automatically trigger download without opening tab
+                const cleanBase = BACKEND_BASE_URL.replace(/\/$/, '');
+                const directDownloadUrl = `${cleanBase}/api/download?url=${encodeURIComponent(imgUrl)}&filename=${encodeURIComponent(`Instagram_${postCode}_Image_${imgNum}.jpg`)}`;
+
+                const cardHtml = `
+                  <div class="carousel-item-card card-surface cursor-pointer bg-slate-800/80 border ${activeBorder} rounded-2xl p-3 sm:p-4 backdrop-blur-sm hover:border-pink-500 transition group" data-img-url="${imgUrl}" data-img-index="${imgNum}">
+                    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                      
+                      <!-- Left side: Thumbnail + Info -->
+                      <div class="flex items-center gap-3 min-w-0">
+                        <img src="${imgThumb}" alt="Image ${imgNum}" class="w-14 h-14 sm:w-16 sm:h-16 rounded-xl object-cover bg-slate-900 border border-slate-700 flex-shrink-0 group-hover:scale-105 transition" />
+                        
+                        <div class="min-w-0">
+                          <h4 class="card-title font-bold text-white text-sm sm:text-base truncate">Image ${imgNum}</h4>
+                          <p class="card-desc text-xs text-slate-400 mt-0.5 truncate">${resolutionText}</p>
+                        </div>
+                      </div>
+
+                      <!-- Right side: Buttons (Download & View) -->
+                      <div class="flex items-center gap-2 w-full sm:w-auto" onclick="event.stopPropagation();">
+                        <a 
+                          href="${directDownloadUrl}" 
+                          class="flex-1 sm:flex-initial py-2 sm:py-2.5 px-4 rounded-xl text-xs sm:text-sm font-bold text-white insta-gradient hover:opacity-90 shadow-md shadow-pink-500/20 flex items-center justify-center gap-1.5 transition">
+                          <i data-lucide="download" class="w-4 h-4"></i>
+                          <span>Download</span>
+                        </a>
+                        <a 
+                          href="${imgUrl}" 
+                          target="_blank" 
+                          rel="noopener"
+                          class="btn-secondary flex-1 sm:flex-initial py-2 sm:py-2.5 px-3.5 rounded-xl text-xs sm:text-sm font-semibold bg-slate-700/70 hover:bg-slate-700 text-slate-200 border border-slate-600/60 flex items-center justify-center gap-1.5 transition">
+                          <i data-lucide="external-link" class="w-4 h-4"></i>
+                          <span>View</span>
+                        </a>
+                      </div>
+
+                    </div>
+                  </div>
+                `;
+                $('#imagesContainer').append(cardHtml);
+              });
+
+              $('#imagesContainer').removeClass('hidden');
+
+            } else {
+              // ==========================================
+              // VIDEO / REEL POST HANDLING 
+              // ==========================================
+              const videoItem = items.find(item => item.kind === 'video' || item.url) || items[0];
+
+              // Thumbnail
+              const thumbUrl = videoItem.thumbnail || data.thumbnail || '';
+              if (thumbUrl) {
+                $('#thumbnailImg').attr('src', thumbUrl);
+              }
+              $('#thumbnailPreviewBtn').attr('href', videoItem.url);
+
+              // 1. SD Video
+              const sdUrl = videoItem.url;
+              $('#videoCard').removeClass('hidden');
+              $('#sdDownloadBtn').attr('href', `${cleanBase}/api/download?url=${encodeURIComponent(sdUrl)}&filename=${encodeURIComponent(`Instagram_Reel_${postCode}_SD.mp4`)}`);
+              $('#sdViewBtn').attr('href', sdUrl);
+
+              // 2. HD Video (if available)
+              const hdUrl = videoItem.hd && videoItem.hd.url ? videoItem.hd.url : null;
+              if (hdUrl) {
+                $('#hdVideoCard').removeClass('hidden');
+                $('#hdDownloadBtn').attr('href', `${cleanBase}/api/download?url=${encodeURIComponent(hdUrl)}&filename=${encodeURIComponent(`Instagram_Reel_${postCode}_HD.mp4`)}`);
+                $('#hdViewBtn').attr('href', hdUrl);
+              }
+
+              // 3. Audio
+              const audioUrl = videoItem.audio || data.audio || null;
+              if (audioUrl) {
+                $('#audioCard').removeClass('hidden');
+                $('#audioDownloadBtn').attr('href', `${cleanBase}/api/download?url=${encodeURIComponent(audioUrl)}&filename=${encodeURIComponent(`Instagram_Audio_${postCode}.mp3`)}`);
+                $('#audioViewBtn').attr('href', audioUrl);
+              }
+            }
+
+            // Caption
+            const caption = data.caption || '';
+            $('#captionContent').text(caption.trim() ? caption : 'No caption provided.');
+
+            // Show Results
+            $('#resultsSection').removeClass('hidden');
+            showToast('Post media retrieved successfully!', 'success');
+            lucide.createIcons();
+
+            // Smooth scroll into view
+            $('html, body').animate({
+              scrollTop: $('#resultsSection').offset().top - 80
+            }, 500);
+          },
+          error: function (xhr, status) {
+            setLoading(false);
+            let errorMsg = 'Failed to fetch the Reel. Please verify the URL and try again.';
+            if (status === 'timeout') {
+              errorMsg = 'Request timed out. The server or Instagram may be slow right now.';
+            } else if (xhr.responseJSON && xhr.responseJSON.error) {
+              errorMsg = xhr.responseJSON.error;
+            } else if (xhr.status === 0) {
+              errorMsg = 'Network or CORS issue. If using Render backend, ensure it is awake and your URL is configured.';
+            }
+            showError('Fetch Error', errorMsg);
+            showToast(errorMsg, 'error');
+          }
+        });
+      });
+
+    });
+  </script>
+</body>
+
+</html>
